@@ -11,9 +11,7 @@ const SHORTCUTS = [
 
 const COLLABORATORS = [
   'Eduardo Ribeiro Silveira',
-  'Vorni Valpir Fagundes da Cunha Junior',
   'Diego Ribeiro Torres',
-  'Lucas Candido Vargas',
 ];
 
 export default function WelcomePage() {
@@ -110,14 +108,20 @@ export default function WelcomePage() {
             </h3>
             <p style={{ color: 'var(--color-text-body)', margin: '2px 0' }}>
               Mobile:{' '}
-              <a href="https://github.com/felipeschwartz/fiber-splice-locator-front" target="_blank" rel="noreferrer">
-                fiber-splice-locator-front
+              <a href="https://github.com/felipeschwartz/fiber-splice-locator-front-app" target="_blank" rel="noreferrer">
+                fiber-splice-locator-front-app
               </a>
             </p>
             <p style={{ color: 'var(--color-text-body)', margin: '2px 0' }}>
               BackEnd:{' '}
               <a href="https://github.com/felipeschwartz/fiber-splice-locator" target="_blank" rel="noreferrer">
                 fiber-splice-locator
+              </a>
+            </p>
+            <p style={{ color: 'var(--color-text-body)', margin: '2px 0' }}>
+              Mobile:{' '}
+              <a href="https://github.com/felipeschwartz/fiber-splice-locator-front-web" target="_blank" rel="noreferrer">
+                fiber-splice-locator-front-web
               </a>
             </p>
           </div>
