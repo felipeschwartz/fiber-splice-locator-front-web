@@ -1,7 +1,8 @@
-// App web roda no navegador, na mesma máquina do backend em dev — sem o
-// alias especial que o app mobile precisa (10.0.2.2 pro emulador Android).
-// Se o backend rodar em outra máquina/porta, troque só esta constante.
-export const API_BASE_URL = 'http://localhost:8080';
+// Em dev, roda no navegador na mesma máquina do backend, por isso o
+// fallback aponta pro localhost. Em produção (build do Render), defina
+// VITE_API_BASE_URL nas Environment Variables do site apontando pra URL
+// pública do backend — o Vite só expõe variáveis prefixadas com VITE_.
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 export const API_PATHS = {
   login: '/api/auth/v1/login',
