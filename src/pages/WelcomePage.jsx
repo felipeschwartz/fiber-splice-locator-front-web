@@ -119,7 +119,7 @@ export default function WelcomePage() {
               </a>
             </p>
             <p style={{ color: 'var(--color-text-body)', margin: '2px 0' }}>
-              Mobile:{' '}
+              Web:{' '}
               <a href="https://github.com/felipeschwartz/fiber-splice-locator-front-web" target="_blank" rel="noreferrer">
                 fiber-splice-locator-front-web
               </a>
