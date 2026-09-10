@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   assignTechnician,
+  cancelServiceOrder,
   getServiceOrder,
   listServiceOrderPhotos,
   listServiceOrderStatusDescriptions,
@@ -9,12 +10,16 @@ import {
 import { listUsers } from '../api/userService';
 import { getApiErrorMessage } from '../api/client';
 import { formatDateTime } from '../utils/format';
+import { useAuth } from '../context/AuthContext';
+import { isGodAdmin } from '../utils/permissions';
 import AuthenticatedImage from '../components/AuthenticatedImage';
 
 const STATUS_LABEL = { OPEN: 'Aberta', IN_PROGRESS: 'Em andamento', COMPLETED: 'Concluída', CANCELLED: 'Cancelada' };
+const TERMINAL_STATUSES = ['COMPLETED', 'CANCELLED'];
 
 export default function ServiceOrderDetailPage() {
   const { id } = useParams();
+  const { user: currentUser } = useAuth();
 
   const [order, setOrder] = useState(null);
   const [history, setHistory] = useState([]);
@@ -27,6 +32,10 @@ export default function ServiceOrderDetailPage() {
   const [assignError, setAssignError] = useState('');
   const [assigning, setAssigning] = useState(false);
   const [viewerPhoto, setViewerPhoto] = useState(null);
+
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -74,10 +83,26 @@ export default function ServiceOrderDetailPage() {
     }
   }
 
+  async function handleCancel() {
+    setCancelling(true);
+    setCancelError('');
+
+    try {
+      const updated = await cancelServiceOrder(id);
+      setOrder(updated);
+      setShowCancelConfirm(false);
+    } catch (err) {
+      setCancelError(getApiErrorMessage(err, 'Não foi possível cancelar a ordem de serviço.'));
+    } finally {
+      setCancelling(false);
+    }
+  }
+
   if (loading) return <p className="muted">Carregando...</p>;
   if (error && !order) return <div className="banner-error">{error}</div>;
 
   const ceo = order.ceo || {};
+  const canCancel = isGodAdmin(currentUser) && !TERMINAL_STATUSES.includes(order.status);
 
   return (
     <div>
@@ -111,9 +136,25 @@ export default function ServiceOrderDetailPage() {
             ))}
           </select>
           {assignError ? <div className="banner-error">{assignError}</div> : null}
-          <button type="submit" className="btn" disabled={assigning || String(order.user?.id) === selectedTechnician}>
-            {assigning ? 'Encaminhando...' : 'Encaminhar'}
-          </button>
+          <div className="actions-row">
+            <button type="submit" className="btn" disabled={assigning || String(order.user?.id) === selectedTechnician}>
+              {assigning ? 'Encaminhando...' : 'Encaminhar'}
+            </button>
+            {canCancel ? (
+              <button
+                type="button"
+                className="btn"
+                style={{ background: 'var(--color-danger)' }}
+                onClick={() => {
+                  setCancelError('');
+                  setShowCancelConfirm(true);
+                }}
+              >
+                Cancelar OS
+              </button>
+            ) : null}
+          </div>
+          {cancelError ? <div className="banner-error">{cancelError}</div> : null}
         </form>
       </div>
 
@@ -149,6 +190,31 @@ export default function ServiceOrderDetailPage() {
           </div>
         )}
       </div>
+
+      {showCancelConfirm ? (
+        <div
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50,
+          }}
+        >
+          <div className="card" style={{ maxWidth: 360 }}>
+            <h3 style={{ fontSize: 16, margin: '0 0 12px' }}>Cancelar ordem de serviço?</h3>
+            <p style={{ margin: '0 0 20px' }}>
+              Tem certeza que deseja cancelar esta ordem de serviço? A CEO voltará ao status Padronizada.
+            </p>
+            {cancelError ? <div className="banner-error" style={{ marginBottom: 16 }}>{cancelError}</div> : null}
+            <div className="actions-row">
+              <button type="button" className="btn btn-outline" onClick={() => setShowCancelConfirm(false)} disabled={cancelling}>
+                Não
+              </button>
+              <button type="button" className="btn" style={{ background: 'var(--color-danger)' }} onClick={handleCancel} disabled={cancelling}>
+                {cancelling ? 'Cancelando...' : 'Sim'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {viewerPhoto ? (
         <div

@@ -25,6 +25,7 @@ export const API_PATHS = {
   openServiceOrder: '/api/service_orders/v1/open',
   serviceOrderById: (id) => `/api/service_orders/v1/id/${encodeURIComponent(id)}`,
   assignTechnician: (id) => `/api/service_orders/v1/${encodeURIComponent(id)}/assign-technician`,
+  cancelServiceOrder: (id) => `/api/service_orders/v1/${encodeURIComponent(id)}/cancel`,
 
   serviceOrderPhotos: (id) => `/api/service_order_photos/v1/service-order/${encodeURIComponent(id)}`,
   serviceOrderStatusDescriptions: (id) =>

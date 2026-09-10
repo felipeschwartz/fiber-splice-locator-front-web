@@ -33,6 +33,11 @@ export async function assignTechnician(serviceOrderId, userId) {
   return data;
 }
 
+export async function cancelServiceOrder(serviceOrderId) {
+  const { data } = await api.patch(API_PATHS.cancelServiceOrder(serviceOrderId));
+  return data;
+}
+
 export async function listServiceOrderStatusDescriptions(serviceOrderId) {
   const { data } = await api.get(API_PATHS.serviceOrderStatusDescriptions(serviceOrderId));
   return Array.isArray(data) ? data : [];
