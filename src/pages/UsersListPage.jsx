@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { listUsers, disableUser } from '../api/userService';
 import { getApiErrorMessage } from '../api/client';
-import { canDisableUser, isGodAdmin } from '../utils/permissions';
+import { canDisableUser, canEditUser, isGodAdmin } from '../utils/permissions';
 
 const ROLE_LABEL = {
   GOD_ADMIN: 'God Admin',
@@ -11,11 +11,17 @@ const ROLE_LABEL = {
   FIELD_TECHNICIAN: 'Técnico',
 };
 
+const ROLE_BADGE = {
+  FIELD_TECHNICIAN: 'badge-neutral',
+  ADMIN: 'badge-warning',
+  GOD_ADMIN: 'badge-primary',
+};
+
 function RoleBadges({ roles }) {
   return (
     <div className="actions-row">
       {(roles || []).map((role) => (
-        <span key={role} className={role === 'FIELD_TECHNICIAN' ? 'badge badge-neutral' : 'badge badge-warning'}>
+        <span key={role} className={`badge ${ROLE_BADGE[role] || 'badge-neutral'}`}>
           {ROLE_LABEL[role] || role}
         </span>
       ))}
@@ -118,9 +124,11 @@ export default function UsersListPage() {
                   </td>
                   <td>
                     <div className="actions-row">
-                      <Link to={`/users/${u.id}/edit`} className="link-button">
-                        Editar
-                      </Link>
+                      {canEditUser(currentUser, u) ? (
+                        <Link to={`/users/${u.id}/edit`} className="link-button">
+                          Editar
+                        </Link>
+                      ) : null}
                       {u.active && canDisableUser(currentUser, u) ? (
                         <button
                           className="link-button"

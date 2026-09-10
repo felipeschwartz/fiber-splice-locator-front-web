@@ -211,6 +211,7 @@ th {
 .badge-success { background: #DCFCE7; color: #166534; }
 .badge-warning { background: var(--color-warning-bg); color: var(--color-warning-text); }
 .badge-danger { background: var(--color-danger-bg); color: #991B1B; }
+.badge-primary { background: var(--color-primary-soft); color: var(--color-primary-dark); }
 
 .actions-row {
   display: flex;

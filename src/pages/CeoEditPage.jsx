@@ -50,7 +50,7 @@ export default function CeoEditPage() {
     <div>
       <div className="page-head">
         <div>
-          <h1 className="page-title">Editar CEO {ceo.boxNumber}</h1>
+          <h1 className="page-title">Editar {ceo.boxNumber}</h1>
         </div>
       </div>
       <CeoForm initialValues={ceo} submitLabel="Salvar alterações" onSubmit={handleSubmit} onCancel={() => navigate(`/ceos/${id}`)} saving={saving} error={saveError} />

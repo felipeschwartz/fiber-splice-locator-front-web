@@ -85,7 +85,7 @@ export default function ServiceOrderDetailPage() {
         <div>
           <h1 className="page-title">Ordem de serviço #{order.serviceOrderId}</h1>
           <p className="page-subtitle">
-            CEO <Link to={`/ceos/${ceo.id}`}>{ceo.boxNumber}</Link> · <span className="badge badge-neutral">{STATUS_LABEL[order.status] || order.status}</span>
+            <Link to={`/ceos/${ceo.id}`}>{ceo.boxNumber}</Link> · <span className="badge badge-neutral">{STATUS_LABEL[order.status] || order.status}</span>
           </p>
         </div>
       </div>

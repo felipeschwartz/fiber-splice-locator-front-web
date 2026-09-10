@@ -2,12 +2,16 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getUser, updateUser } from '../api/userService';
 import { getApiErrorMessage } from '../api/client';
+import { useAuth } from '../context/AuthContext';
+import { canEditUser } from '../utils/permissions';
 
 const ROLE_LABEL = { GOD_ADMIN: 'God Admin', ADMIN: 'Admin', FIELD_TECHNICIAN: 'Técnico' };
+const ROLE_BADGE = { GOD_ADMIN: 'badge-primary', ADMIN: 'badge-warning', FIELD_TECHNICIAN: 'badge-neutral' };
 
 export default function UserEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
 
   const [original, setOriginal] = useState(null);
   const [name, setName] = useState('');
@@ -57,6 +61,9 @@ export default function UserEditPage() {
 
   if (loading) return <p className="muted">Carregando...</p>;
   if (error && !original) return <div className="banner-error">{error}</div>;
+  if (original && !canEditUser(currentUser, original)) {
+    return <div className="banner-error">Apenas um GOD_ADMIN pode editar uma conta GOD_ADMIN.</div>;
+  }
 
   return (
     <div>
@@ -79,7 +86,7 @@ export default function UserEditPage() {
             <span className="field-label">Perfil</span>
             <div className="actions-row">
               {(original?.roles || []).map((role) => (
-                <span key={role} className="badge badge-neutral">{ROLE_LABEL[role] || role}</span>
+                <span key={role} className={`badge ${ROLE_BADGE[role] || 'badge-neutral'}`}>{ROLE_LABEL[role] || role}</span>
               ))}
             </div>
           </div>

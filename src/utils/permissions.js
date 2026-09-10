@@ -14,3 +14,11 @@ export function canDisableUser(currentUser, target) {
 export function isGodAdmin(user) {
   return Boolean(user?.roles?.includes('GOD_ADMIN'));
 }
+
+// Espelha a regra do backend (UserService.ensureCanEdit) só pra decidir
+// o que mostrar na tela — a garantia de verdade continua no servidor.
+export function canEditUser(currentUser, target) {
+  if (!currentUser || !target) return false;
+  if (!isGodAdmin(target)) return true;
+  return isGodAdmin(currentUser);
+}
