@@ -18,7 +18,14 @@ export const API_PATHS = {
   disableUser: (id) => `/api/user/v1/id/${encodeURIComponent(id)}/disable`,
 
   ceos: '/api/ceo/v1',
+  ceosPage: (page = 0, size = 20, { statuses, sort } = {}) => {
+    const params = new URLSearchParams({ page, size });
+    (statuses || []).forEach((status) => params.append('status', status));
+    if (sort) params.set('sort', sort);
+    return `/api/ceo/v1?${params.toString()}`;
+  },
   ceoById: (id) => `/api/ceo/v1/id/${encodeURIComponent(id)}`,
+  ceoSearch: (query) => `/api/ceo/v1/search?q=${encodeURIComponent(query)}`,
 
   serviceOrders: '/api/service_orders/v1',
   serviceOrdersByCeo: (ceoId) => `/api/service_orders/v1/ceo/${encodeURIComponent(ceoId)}`,

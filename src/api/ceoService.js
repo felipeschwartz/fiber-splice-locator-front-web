@@ -1,9 +1,14 @@
 import { api } from './client';
 import { API_PATHS } from './config';
-import { unwrapCollection } from './unwrap';
+import { unwrapCollection, unwrapPage } from './unwrap';
 
-export async function listCeos() {
-  const { data } = await api.get(API_PATHS.ceos);
+export async function listCeos(page = 0, size = 20, options = {}) {
+  const { data } = await api.get(API_PATHS.ceosPage(page, size, options));
+  return unwrapPage(data);
+}
+
+export async function searchCeos(query) {
+  const { data } = await api.get(API_PATHS.ceoSearch(query));
   return unwrapCollection(data);
 }
 

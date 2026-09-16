@@ -10,3 +10,16 @@ export function unwrapCollection(data) {
   }
   return [];
 }
+
+// GET paginado (PagedModel do Spring HATEOAS) também traz um bloco "page"
+// com os metadados — separado aqui pra quem precisa montar os controles
+// de "página X de Y" / próxima / anterior.
+export function unwrapPage(data) {
+  return {
+    content: unwrapCollection(data),
+    number: data?.page?.number ?? 0,
+    size: data?.page?.size ?? 0,
+    totalElements: data?.page?.totalElements ?? 0,
+    totalPages: data?.page?.totalPages ?? 0,
+  };
+}
