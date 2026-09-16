@@ -11,7 +11,7 @@ const STATUS_BADGE = { OPEN: 'badge-neutral', IN_PROGRESS: 'badge-warning', COMP
 export default function ServiceOrdersListPage() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  const [filter, setFilter] = useState('ALL');
+  const [filter, setFilter] = useState('OPEN');
   const [ascending, setAscending] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
