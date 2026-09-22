@@ -26,6 +26,13 @@ export const API_PATHS = {
   },
   ceoById: (id) => `/api/ceo/v1/id/${encodeURIComponent(id)}`,
   ceoSearch: (query) => `/api/ceo/v1/search?q=${encodeURIComponent(query)}`,
+  ceoExport: ({ statuses, sort } = {}) => {
+    const params = new URLSearchParams();
+    (statuses || []).forEach((status) => params.append('status', status));
+    if (sort) params.set('sort', sort);
+    const query = params.toString();
+    return `/api/ceo/v1/exportPage${query ? `?${query}` : ''}`;
+  },
 
   serviceOrders: '/api/service_orders/v1',
   serviceOrdersByCeo: (ceoId) => `/api/service_orders/v1/ceo/${encodeURIComponent(ceoId)}`,

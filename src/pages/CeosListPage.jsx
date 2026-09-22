@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { listCeos, searchCeos } from '../api/ceoService';
+import { exportCeos, listCeos, searchCeos } from '../api/ceoService';
 import { getApiErrorMessage } from '../api/client';
 
 const STATUS_LABEL = {
@@ -33,6 +33,7 @@ export default function CeosListPage() {
   const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [exporting, setExporting] = useState(false);
 
   // Busca (via /search, sem paginação) e navegação por página (via
   // findAll paginado, com filtro de status e ordenação) são fluxos
@@ -87,6 +88,22 @@ export default function CeosListPage() {
     setStatusFilters((current) =>
       current.includes(status) ? current.filter((s) => s !== status) : [...current, status]
     );
+  }
+
+  async function handleExport(format) {
+    setExporting(true);
+    setError('');
+    try {
+      await exportCeos({
+        statuses: statusFilters,
+        sort: `${sortField},${sortAscending ? 'asc' : 'desc'}`,
+        format,
+      });
+    } catch (err) {
+      setError(getApiErrorMessage(err, 'Não foi possível exportar as CEOs.'));
+    } finally {
+      setExporting(false);
+    }
   }
 
   function toggleSort(field) {
@@ -153,6 +170,24 @@ export default function CeosListPage() {
               </button>
             );
           })}
+
+          <span className="muted" style={{ marginLeft: 8 }}>Exportar:</span>
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            disabled={exporting}
+            onClick={() => handleExport('xlsx')}
+          >
+            {exporting ? 'Exportando...' : 'XLSX'}
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            disabled={exporting}
+            onClick={() => handleExport('csv')}
+          >
+            {exporting ? 'Exportando...' : 'CSV'}
+          </button>
         </div>
       ) : null}
 
