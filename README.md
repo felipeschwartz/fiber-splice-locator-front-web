@@ -1,7 +1,7 @@
 # Fiber Splice Locator — Painel Web
 
 Painel administrativo web (React + Vite) usado por administradores (perfis
-`ADMIN` e `GOD_ADMIN`) para gerenciar CEOs, ordens de serviço e usuários, e
+`ADMIN` e `SUPER_ADMIN`) para gerenciar CEOs, ordens de serviço e usuários, e
 acompanhar indicadores de produtividade — sem os recursos exclusivos de campo
 do app mobile (câmera e GPS).
 
@@ -40,7 +40,7 @@ Junior, Diego Ribeiro Torres, Lucas Candido Vargas
 - O [BackEnd](https://github.com/felipeschwartz/fiber-splice-locator) rodando
   localmente em `http://localhost:8080` (local ou via Docker — veja o README
   de lá)
-- Um usuário `ADMIN` ou `GOD_ADMIN` cadastrado — o login recusa qualquer
+- Um usuário `ADMIN` ou `SUPER_ADMIN` cadastrado — o login recusa qualquer
   outro perfil (ex.: `FIELD_TECHNICIAN`) neste painel
 
 ## Como rodar
@@ -77,11 +77,11 @@ chamada da API falha com erro de conexão no navegador (o preflight `OPTIONS`
 ## Contas de teste
 
 O backend, ao subir com o banco vazio, já cria usuários de exemplo — só
-`ADMIN` e `GOD_ADMIN` conseguem entrar neste painel:
+`ADMIN` e `SUPER_ADMIN` conseguem entrar neste painel:
 
 | E-mail | Senha | Perfil |
 |---|---|---|
-| god@fiberlocator.com | god123 | GOD_ADMIN |
+| superadmin@fiberlocator.com | superadmin123 | SUPER_ADMIN |
 | admin@fiberlocator.com | admin123 | ADMIN |
 
 ## Estrutura do projeto
@@ -95,7 +95,7 @@ src/api/              chamadas HTTP (axios) por domínio (auth, ceo, usuário,
                       axios + token no localStorage) e config.js (URL base e
                       mapa de rotas do backend).
 src/context/          estado de autenticação (AuthContext) — recusa login de
-                      quem não é ADMIN/GOD_ADMIN.
+                      quem não é ADMIN/SUPER_ADMIN.
 src/components/       peças reutilizáveis entre páginas: Layout (barra de
                       navegação), ProtectedRoute, DateRangeFilter, CeoForm
                       (compartilhado entre criar/editar CEO),

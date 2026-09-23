@@ -5,8 +5,8 @@ import { getApiErrorMessage } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { canEditUser } from '../utils/permissions';
 
-const ROLE_LABEL = { GOD_ADMIN: 'God Admin', ADMIN: 'Admin', FIELD_TECHNICIAN: 'Técnico' };
-const ROLE_BADGE = { GOD_ADMIN: 'badge-primary', ADMIN: 'badge-warning', FIELD_TECHNICIAN: 'badge-neutral' };
+const ROLE_LABEL = { SUPER_ADMIN: 'Super Admin', ADMIN: 'Admin', FIELD_TECHNICIAN: 'Técnico' };
+const ROLE_BADGE = { SUPER_ADMIN: 'badge-primary', ADMIN: 'badge-warning', FIELD_TECHNICIAN: 'badge-neutral' };
 
 export default function UserEditPage() {
   const { id } = useParams();
@@ -62,7 +62,7 @@ export default function UserEditPage() {
   if (loading) return <p className="muted">Carregando...</p>;
   if (error && !original) return <div className="banner-error">{error}</div>;
   if (original && !canEditUser(currentUser, original)) {
-    return <div className="banner-error">Apenas um GOD_ADMIN pode editar uma conta GOD_ADMIN.</div>;
+    return <div className="banner-error">Apenas um SUPER_ADMIN pode editar uma conta SUPER_ADMIN.</div>;
   }
 
   return (

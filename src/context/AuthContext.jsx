@@ -5,7 +5,7 @@ import { tokenStorage } from '../api/client';
 const AuthContext = createContext(null);
 
 const USER_STORAGE_KEY = 'fiberSpliceLocator.user';
-const ALLOWED_ROLES = ['ADMIN', 'GOD_ADMIN'];
+const ALLOWED_ROLES = ['ADMIN', 'SUPER_ADMIN'];
 
 function readStoredUser() {
   try {
@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
 
     const roles = data.user?.roles || [];
     if (!roles.some((role) => ALLOWED_ROLES.includes(role))) {
-      throw new Error('Este painel é restrito a administradores (ADMIN ou GOD_ADMIN).');
+      throw new Error('Este painel é restrito a administradores (ADMIN ou SUPER_ADMIN).');
     }
 
     tokenStorage.set(data.token);

@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { listUsers, disableUser } from '../api/userService';
 import { getApiErrorMessage } from '../api/client';
-import { canDisableUser, canEditUser, isGodAdmin } from '../utils/permissions';
+import { canDisableUser, canEditUser, isSuperAdmin } from '../utils/permissions';
 
 const ROLE_LABEL = {
-  GOD_ADMIN: 'God Admin',
+  SUPER_ADMIN: 'Super Admin',
   ADMIN: 'Admin',
   FIELD_TECHNICIAN: 'Técnico',
 };
@@ -14,7 +14,7 @@ const ROLE_LABEL = {
 const ROLE_BADGE = {
   FIELD_TECHNICIAN: 'badge-neutral',
   ADMIN: 'badge-warning',
-  GOD_ADMIN: 'badge-primary',
+  SUPER_ADMIN: 'badge-primary',
 };
 
 function RoleBadges({ roles }) {
@@ -153,9 +153,9 @@ export default function UsersListPage() {
         </div>
       )}
 
-      {!isGodAdmin(currentUser) ? (
+      {!isSuperAdmin(currentUser) ? (
         <p className="muted" style={{ marginTop: 12 }}>
-          Como ADMIN, você só pode criar e desativar contas de técnico. Contas de administrador só podem ser geridas por um GOD_ADMIN.
+          Como ADMIN, você só pode criar e desativar contas de técnico. Contas de administrador só podem ser geridas por um SUPER_ADMIN.
         </p>
       ) : null}
     </div>

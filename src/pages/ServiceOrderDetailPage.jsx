@@ -11,7 +11,7 @@ import { listUsers } from '../api/userService';
 import { getApiErrorMessage } from '../api/client';
 import { formatDateTime } from '../utils/format';
 import { useAuth } from '../context/AuthContext';
-import { isGodAdmin } from '../utils/permissions';
+import { isSuperAdmin } from '../utils/permissions';
 import AuthenticatedImage from '../components/AuthenticatedImage';
 
 const STATUS_LABEL = { OPEN: 'Aberta', IN_PROGRESS: 'Em andamento', COMPLETED: 'Concluída', CANCELLED: 'Cancelada' };
@@ -102,7 +102,7 @@ export default function ServiceOrderDetailPage() {
   if (error && !order) return <div className="banner-error">{error}</div>;
 
   const ceo = order.ceo || {};
-  const canCancel = isGodAdmin(currentUser) && !TERMINAL_STATUSES.includes(order.status);
+  const canCancel = isSuperAdmin(currentUser) && !TERMINAL_STATUSES.includes(order.status);
 
   return (
     <div>

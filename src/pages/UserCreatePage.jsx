@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { createUser } from '../api/userService';
 import { getApiErrorMessage } from '../api/client';
-import { isGodAdmin } from '../utils/permissions';
+import { isSuperAdmin } from '../utils/permissions';
 
-const AVAILABLE_ROLES = ['FIELD_TECHNICIAN', 'ADMIN', 'GOD_ADMIN'];
-const ROLE_LABEL = { GOD_ADMIN: 'God Admin', ADMIN: 'Admin', FIELD_TECHNICIAN: 'Técnico' };
+const AVAILABLE_ROLES = ['FIELD_TECHNICIAN', 'ADMIN', 'SUPER_ADMIN'];
+const ROLE_LABEL = { SUPER_ADMIN: 'Super Admin', ADMIN: 'Admin', FIELD_TECHNICIAN: 'Técnico' };
 
 export default function UserCreatePage() {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
-  const canChooseRoles = isGodAdmin(currentUser);
+  const canChooseRoles = isSuperAdmin(currentUser);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
