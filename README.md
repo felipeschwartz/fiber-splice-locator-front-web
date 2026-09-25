@@ -36,7 +36,8 @@ Junior, Diego Ribeiro Torres, Lucas Candido Vargas
 
 ## Pré-requisitos
 
-- **Node.js** (LTS) e **npm**
+- **Node.js** (LTS) e **npm**, para rodar em modo de desenvolvimento, **ou**
+  **Docker**, para rodar a versão de produção num container
 - O [BackEnd](https://github.com/felipeschwartz/fiber-splice-locator) rodando
   localmente em `http://localhost:8080` (local ou via Docker — veja o README
   de lá)
@@ -45,34 +46,80 @@ Junior, Diego Ribeiro Torres, Lucas Candido Vargas
 
 ## Como rodar
 
+### Em modo de desenvolvimento (Vite)
+
 ```bash
 npm install
 npm run dev
 ```
 
-Acesse `http://localhost:5173`.
+Acesse `http://localhost:5173`. Nesse modo, a página recarrega sozinha a cada
+alteração no código.
+
+### Com Docker
+
+O `Dockerfile` gera a versão de produção em duas etapas: primeiro faz o build
+com Node, depois serve os arquivos estáticos com **nginx**. O Node não vai
+para a imagem final.
+
+```bash
+docker build --build-arg VITE_API_BASE_URL=http://localhost:8080 -t fiber-splice-locator-web .
+docker run -d --name fiber-splice-locator-web -p 8081:80 fiber-splice-locator-web
+```
+
+Acesse `http://localhost:8081`.
+
+- Dentro do container, o nginx escuta na porta **80**. O `-p 8081:80` liga a
+  porta 8081 do seu computador à porta 80 do container. A 8081 é só uma
+  escolha: pode ser qualquer porta livre, desde que ela também esteja
+  liberada no CORS do backend (veja abaixo).
+- O `VITE_API_BASE_URL` é gravado no JavaScript **durante o build**. Mudar
+  essa variável com o container já rodando não tem efeito; para apontar para
+  outro backend, é preciso gerar a imagem de novo.
+- `localhost:8080` funciona mesmo com o painel dentro do container, porque
+  quem chama a API é o navegador, que roda no seu computador, e não o
+  container.
+
+No **IntelliJ Ultimate**, dá para fazer o mesmo por uma Run Configuration do
+tipo *Dockerfile*: informe o *Image tag*, o *Container name*, o *Bind ports*
+(`8081:80`) e o *Build args* (`VITE_API_BASE_URL=http://localhost:8080`).
 
 ## Configurar a API e o CORS
 
-O endereço do backend fica em `src/api/config.js`:
+O endereço do backend vem da variável de ambiente `VITE_API_BASE_URL`, lida
+em `src/api/config.js`. Se ela não for informada, o painel usa
+`http://localhost:8080`:
 
 ```js
-export const API_BASE_URL = 'http://localhost:8080';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 ```
 
+Onde definir a variável, conforme a forma de rodar:
+
+| Forma de rodar | Onde definir |
+|---|---|
+| `npm run dev` | Não precisa, se o backend estiver em `localhost:8080`. Para outro endereço, crie um arquivo `.env.local` com `VITE_API_BASE_URL=...` |
+| Docker | `--build-arg VITE_API_BASE_URL=...` no `docker build` |
+| Render | *Environment Variables* do site |
+
+O Vite só expõe para o navegador as variáveis que começam com `VITE_`.
+
 Como o painel roda no navegador (não é um app nativo), o backend precisa
-liberar CORS para a origem do Vite. Isso é configurado do lado do backend, em
-`application.yml`:
+liberar CORS para o endereço em que o painel está aberto. Isso é configurado
+do lado do backend, em `application.yml`:
 
 ```yaml
 cors:
-  originPatterns: http://localhost:3000,http://localhost:4200,http://localhost:8080,http://localhost:5173
+  originPatterns: http://localhost:3000,http://localhost:4200,http://localhost:8080,http://localhost:5173,https://fiber-splice-locator-front-web.onrender.com,http://localhost:8081
 ```
 
-Se a porta do Vite mudar (ex.: 5173 já estiver ocupada e ele subir em 5174),
-adicione a nova porta nessa lista e reinicie o backend — sem isso, toda
-chamada da API falha com erro de conexão no navegador (o preflight `OPTIONS`
-é rejeitado antes mesmo de chegar nas rotas).
+A lista precisa incluir a porta que você está usando: a **5173** no modo de
+desenvolvimento, ou a porta mapeada no `docker run` (a **8081** do exemplo
+acima). Se o Vite subir em outra porta (ex.: 5174, com a 5173 ocupada) ou
+você mapear o container para outra porta, adicione-a nessa lista e reinicie
+o backend. Sem isso, toda chamada da API falha com erro de conexão no
+navegador, porque o preflight `OPTIONS` é rejeitado antes de chegar nas
+rotas.
 
 ## Contas de teste
 
@@ -87,6 +134,12 @@ O backend, ao subir com o banco vazio, já cria usuários de exemplo — só
 ## Estrutura do projeto
 
 ```
+Dockerfile           build em duas etapas: Node gera o build, nginx serve
+                      os arquivos estáticos.
+nginx.conf           configuração do nginx no container; redireciona
+                      qualquer rota para o index.html, senão recarregar uma
+                      página como /ceos/5 devolveria 404.
+.dockerignore        o que não entra na imagem (node_modules, dist, etc.).
 src/index.css        variáveis de cor/espaçamento e classes utilitárias
                       (.card, .btn, .field-*, .badge, .banner-*, etc.) — o
                       kit de estilo compartilhado por todas as páginas.
