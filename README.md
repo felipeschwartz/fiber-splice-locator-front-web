@@ -19,7 +19,7 @@ O projeto atende a uma necessidade real da
 repositório é o painel web; a API que ele consome está em
 [fiber-splice-locator](https://github.com/felipeschwartz/fiber-splice-locator),
 e o app usado pelos técnicos em campo está em
-[fiber-splice-locator-front](https://github.com/felipeschwartz/fiber-splice-locator-front).
+[fiber-splice-locator-front-app](https://github.com/felipeschwartz/fiber-splice-locator-front-app).
 
 **Desenvolvedor principal:** [Felipe Schwartz](https://github.com/felipeschwartz)
 **Colaboradores:** Eduardo Ribeiro Silveira, Vorni Valpir Fagundes da Cunha
@@ -126,15 +126,49 @@ container do backend (ex.: `CORS_ORIGINPATTERNS: https://seu-endereco`).
 Ela **substitui** a lista inteira do `application.yml`, então inclua nela
 todas as origens que devem ter acesso.
 
+### Em servidor, com HTTPS
+
+No servidor de testes, painel e API ficam no **mesmo endereço**, atrás de um
+proxy HTTPS (Caddy): `/api/*` vai para o backend e o resto para o painel. Nesse
+cenário:
+
+- gere a imagem com `VITE_API_BASE_URL` igual ao endereço do site (ex.:
+  `https://seu-endereco`);
+- no backend, use `CORS_ORIGINPATTERNS=https://seu-endereco` e
+  `SERVER_FORWARD_HEADERS_STRATEGY=framework` (este último faz as URLs das
+  fotos saírem com `https`; sem ele, o navegador bloqueia as imagens);
+- não publique a porta do container do painel: só o proxy fica exposto.
+
 ## Contas de teste
 
-O backend, ao subir com o banco vazio, já cria usuários de exemplo — só
-`ADMIN` e `SUPER_ADMIN` conseguem entrar neste painel:
+Com o backend no perfil `dev` (o padrão para desenvolvimento), ao subir com o
+banco vazio ele cria usuários de exemplo. Só `ADMIN` e `SUPER_ADMIN`
+conseguem entrar neste painel:
 
 | E-mail | Senha | Perfil |
 |---|---|---|
 | superadmin@fiberlocator.com | superadmin123 | SUPER_ADMIN |
 | admin@fiberlocator.com | admin123 | ADMIN |
+
+Essas contas **não existem** no perfil `prod` do backend: em produção, o
+primeiro SUPER_ADMIN é criado pelas variáveis `INITIAL_ADMIN_*` (veja o README
+do backend).
+
+## Regras de acesso que o painel reflete
+
+As regras valem no backend. O painel só as espelha para esconder ou mostrar
+botões:
+
+- **Login:** depois de 5 senhas erradas para o mesmo e-mail, a partir do
+  mesmo computador, o login fica bloqueado por 15 minutos. A tela mostra
+  "Muitas tentativas. Tente novamente em X minuto(s)." O "Esqueci minha senha"
+  também tem limite de pedidos.
+- **Senhas:** novas senhas (criação de usuário, troca e redefinição) precisam
+  ter pelo menos 8 caracteres.
+- **Contas de administrador:** só um SUPER_ADMIN cria, edita ou desativa
+  contas ADMIN e SUPER_ADMIN. Um ADMIN edita a própria conta e as de técnicos,
+  e cria e desativa apenas técnicos.
+- **Cancelar uma OS:** só SUPER_ADMIN.
 
 ## Estrutura do projeto
 
@@ -164,9 +198,9 @@ src/pages/            uma página por rota (Login, Esqueci/Redefinir senha,
                       Boas-vindas, listas/detalhes/formulários de Ordens de
                       Serviço, CEOs e Usuários, Relatórios).
 src/utils/            formatação de data e período padrão (format.js) e a
-                      regra de hierarquia de quem pode desativar quem
-                      (permissions.js), espelhando a regra do backend só
-                      para decidir o que mostrar na tela.
+                      regra de hierarquia de quem pode editar e desativar
+                      quem (permissions.js), espelhando a regra do backend
+                      só para decidir o que mostrar na tela.
 ```
 
 ### Para mudar o visual do painel
@@ -186,4 +220,4 @@ de navegação principal, em `NAV_ITEMS` dentro de `src/components/Layout.jsx`.
 ## Repositórios relacionados
 
 - **BackEnd:** [fiber-splice-locator](https://github.com/felipeschwartz/fiber-splice-locator)
-- **App mobile:** [fiber-splice-locator-front](https://github.com/felipeschwartz/fiber-splice-locator-front)
+- **App mobile:** [fiber-splice-locator-front-app](https://github.com/felipeschwartz/fiber-splice-locator-front-app)
