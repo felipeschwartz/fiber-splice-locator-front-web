@@ -19,6 +19,9 @@ export function isSuperAdmin(user) {
 // o que mostrar na tela — a garantia de verdade continua no servidor.
 export function canEditUser(currentUser, target) {
   if (!currentUser || !target) return false;
-  if (!isSuperAdmin(target)) return true;
-  return isSuperAdmin(currentUser);
+  if (currentUser.id === target.id) return true;
+
+  const targetRoles = target.roles || [];
+  const targetIsPrivileged = targetRoles.includes('SUPER_ADMIN') || targetRoles.includes('ADMIN');
+  return !targetIsPrivileged || isSuperAdmin(currentUser);
 }

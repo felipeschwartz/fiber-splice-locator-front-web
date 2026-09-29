@@ -62,7 +62,7 @@ export default function UserEditPage() {
   if (loading) return <p className="muted">Carregando...</p>;
   if (error && !original) return <div className="banner-error">{error}</div>;
   if (original && !canEditUser(currentUser, original)) {
-    return <div className="banner-error">Apenas um SUPER_ADMIN pode editar uma conta SUPER_ADMIN.</div>;
+    return <div className="banner-error">Apenas um SUPER_ADMIN pode editar contas de administrador (ADMIN ou SUPER_ADMIN).</div>;
   }
 
   return (
