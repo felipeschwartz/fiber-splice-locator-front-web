@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { resetPassword } from '../api/authService';
 import { getApiErrorMessage } from '../api/client';
 
-const MIN_PASSWORD_LENGTH = 6;
+const MIN_PASSWORD_LENGTH = 8;
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();

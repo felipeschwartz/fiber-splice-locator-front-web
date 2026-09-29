@@ -7,6 +7,7 @@ import { isSuperAdmin } from '../utils/permissions';
 
 const AVAILABLE_ROLES = ['FIELD_TECHNICIAN', 'ADMIN', 'SUPER_ADMIN'];
 const ROLE_LABEL = { SUPER_ADMIN: 'Super Admin', ADMIN: 'Admin', FIELD_TECHNICIAN: 'Técnico' };
+const MIN_PASSWORD_LENGTH = 8;
 
 export default function UserCreatePage() {
   const navigate = useNavigate();
@@ -29,6 +30,10 @@ export default function UserCreatePage() {
 
     if (!name.trim() || !email.trim() || !password) {
       setError('Preencha nome, e-mail e senha.');
+      return;
+    }
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setError(`A senha deve ter pelo menos ${MIN_PASSWORD_LENGTH} caracteres.`);
       return;
     }
     if (canChooseRoles && !roles.length) {
@@ -88,6 +93,7 @@ export default function UserCreatePage() {
           onChange={(event) => setPassword(event.target.value)}
           style={{ marginBottom: 14 }}
           autoComplete="new-password"
+          placeholder={`Mínimo de ${MIN_PASSWORD_LENGTH} caracteres`}
         />
 
         {canChooseRoles ? (
