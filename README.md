@@ -100,7 +100,6 @@ Onde definir a variável, conforme a forma de rodar:
 |---|---|
 | `npm run dev` | Não precisa, se o backend estiver em `localhost:8080`. Para outro endereço, crie um arquivo `.env.local` com `VITE_API_BASE_URL=...` |
 | Docker | `--build-arg VITE_API_BASE_URL=...` no `docker build` |
-| Render | *Environment Variables* do site |
 
 O Vite só expõe para o navegador as variáveis que começam com `VITE_`.
 
@@ -110,7 +109,7 @@ do lado do backend, em `application.yml`:
 
 ```yaml
 cors:
-  originPatterns: http://localhost:3000,http://localhost:4200,http://localhost:8080,http://localhost:5173,https://fiber-splice-locator-front-web.onrender.com,http://localhost:8081
+  originPatterns: http://localhost:3000,http://localhost:4200,http://localhost:8080,http://localhost:5173,http://localhost:8081
 ```
 
 A lista precisa incluir a porta que você está usando: a **5173** no modo de
@@ -120,6 +119,12 @@ você mapear o container para outra porta, adicione-a nessa lista e reinicie
 o backend. Sem isso, toda chamada da API falha com erro de conexão no
 navegador, porque o preflight `OPTIONS` é rejeitado antes de chegar nas
 rotas.
+
+Num servidor, não é preciso alterar o `application.yml` nem gerar uma imagem
+nova do backend: defina a variável de ambiente `CORS_ORIGINPATTERNS` no
+container do backend (ex.: `CORS_ORIGINPATTERNS: https://seu-endereco`).
+Ela **substitui** a lista inteira do `application.yml`, então inclua nela
+todas as origens que devem ter acesso.
 
 ## Contas de teste
 

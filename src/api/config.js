@@ -1,7 +1,7 @@
 // Em dev, roda no navegador na mesma máquina do backend, por isso o
-// fallback aponta pro localhost. Em produção (build do Render), defina
-// VITE_API_BASE_URL nas Environment Variables do site apontando pra URL
-// pública do backend — o Vite só expõe variáveis prefixadas com VITE_.
+// fallback aponta pro localhost. Para um servidor, passe VITE_API_BASE_URL
+// com a URL pública do backend no build da imagem Docker (--build-arg) —
+// o Vite só expõe variáveis prefixadas com VITE_.
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 export const API_PATHS = {
